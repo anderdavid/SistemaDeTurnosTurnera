@@ -19,7 +19,8 @@ class MyListApp : ListActivity() {
 
     val testActivitys = arrayOf(
         "TestConectionActivity",
-        "MainActivity"
+        "MainActivity",
+        "VolleyTestActivity"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
