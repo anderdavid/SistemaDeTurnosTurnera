@@ -11,7 +11,7 @@
             android:theme="@style/AppTheme">
         <activity
                 android:name=".LoginActivity"
-                android:screenOrientation="landscape"
+                android:screenOrientation="portrait"
 
         >
 
