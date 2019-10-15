@@ -13,6 +13,16 @@ import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.content_login.*
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley
+
+
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,6 +33,8 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.content_login)
         Log.d(TAG,"hello world "+TAG)
 
+        val requestQueue = Volley.newRequestQueue(this@LoginActivity)
+
         this.ingresar_btn.setOnClickListener(View.OnClickListener {
             Log.d(TAG,"ingresar_btn.setOnClickListener onClick")
 
@@ -32,8 +44,33 @@ class LoginActivity : AppCompatActivity() {
                 Log.d(TAG,"error email no valido")
                 Toast.makeText(applicationContext,"Email no valido",Toast.LENGTH_SHORT).show()
             }else{
-                Log.d(TAG,"campos validados")
+
                 Log.d(TAG,"ingresar a: "+ Api.AUTENTICATION_URL)
+                
+                val postRequest = object : StringRequest(Request.Method.POST,  Api.AUTENTICATION_URL,
+                    Response.Listener { response ->
+                        // response
+                        Log.d("Response", response)
+                        Toast.makeText(applicationContext, "hello volley $response", Toast.LENGTH_LONG).show()
+                    },
+                    Response.ErrorListener { error ->
+                        // error
+
+                        Log.d(TAG,error.toString())
+                        Toast.makeText(applicationContext, "error $error", Toast.LENGTH_LONG).show()
+                    }
+                ) {
+
+                    override fun getParams(): Map<String, String> {
+                        val params = HashMap<String, String>()
+                        params["email"] = login_edt.text.toString()
+                        params["password"] = password_edt.text.toString()
+
+
+                        return params
+                    }
+                }
+                requestQueue.add(postRequest)
 
             }
 
