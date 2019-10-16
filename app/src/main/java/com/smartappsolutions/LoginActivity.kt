@@ -1,5 +1,6 @@
 package com.smartappsolutions
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -20,6 +21,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley
+import org.json.JSONObject
+
+
 
 
 
@@ -46,12 +50,24 @@ class LoginActivity : AppCompatActivity() {
             }else{
 
                 Log.d(TAG,"ingresar a: "+ Api.AUTENTICATION_URL)
-                
+
                 val postRequest = object : StringRequest(Request.Method.POST,  Api.AUTENTICATION_URL,
                     Response.Listener { response ->
                         // response
-                        Log.d("Response", response)
-                        Toast.makeText(applicationContext, "hello volley $response", Toast.LENGTH_LONG).show()
+                        Log.d(TAG, response)
+
+                        val jsonResponse = JSONObject(response.toString())
+                        val status = jsonResponse.getString("status")
+                        Log.d(TAG, "status: $status")
+
+                        if (status.equals("true")) {
+                            val intent = Intent(this, MainActivity::class.java)
+                            startActivity(intent)
+                            finish();
+                        }else{
+                            Toast.makeText(applicationContext,jsonResponse.getString("msg"),Toast.LENGTH_SHORT).show()
+                        }
+
                     },
                     Response.ErrorListener { error ->
                         // error
