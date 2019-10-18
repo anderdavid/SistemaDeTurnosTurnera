@@ -1,6 +1,7 @@
 package com.smartappsolutions
 
 import android.content.Intent
+import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -22,20 +23,24 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
-
-
-
-
+import com.smartappsolutions.database.AdapterDB
+import java.sql.SQLException;
 
 
 class LoginActivity : AppCompatActivity() {
 
     val TAG= "LoginActivity"
 
+    var db: AdapterDB? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.content_login)
         Log.d(TAG,"hello world "+TAG)
+
+        initDB()
+
+        testSQLite()
 
         val requestQueue = Volley.newRequestQueue(this@LoginActivity)
 
@@ -114,5 +119,25 @@ class LoginActivity : AppCompatActivity() {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
+    private fun initDB() {
+
+        db = AdapterDB(this)
+        try {
+            db!!.open()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun testSQLite(){
+        db!!.createLoginStatus("true")
+
+        var cursor:Cursor = db!!.fetchLoginStatus("1")
+        var status:String =cursor.getString(cursor.getColumnIndex(AdapterDB.KEY_STATUS))
+
+        Toast.makeText(applicationContext,"status: "+status,Toast.LENGTH_SHORT).show()
+
+    }
 
 }
